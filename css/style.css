@@ -20,16 +20,40 @@
     margin-top: 10px;
     margin-left: 4%;
     margin-right: 4%;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     display: flex;
     justify-content: center;
     gap:40px;
     height: 18vh;
+    position: relative;
 }
 .header-title{
     font-size: 10vh;
     display: flex;
     align-self: center;
+    font-family: 'Special Elite', cursive;
+}
+
+.logo-and-nav{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.nav-bar{
+    display: flex;
+    align-self: center;
+    position: absolute;
+    bottom:0%;
+    font-size: 20px;
+    gap: 60px;
+    text-decoration: none;
+    font-size: 22px;
+}
+
+.nav-bar > * {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
     font-family: 'Special Elite', cursive;
 }
 
@@ -155,12 +179,11 @@ cursor:pointer;
     gap: 10px;
     margin-bottom:40px ;
 }
-input{
+.filter{
     /* display: flex; */
     height: 100%;
     width: 100%;
 }
-
 /* DETAILS */
 .book-details {
     display: flex;
@@ -208,6 +231,26 @@ user-select: none;
   text-decoration: none;
     padding: 3px;
 }
+
+/* REVIEW */
+.form-review{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 55%;
+    right: 20%;
+    transform: translate(0,-50%);
+    z-index: 10;
+    width:35%;
+    height: 25%;
+    background-color: rgb(180, 243, 128);
+    padding: 20px;
+}
+
+.add-review{
+    width: 90%;
+}
+
 
 /* FOOTER */
 .app-footer {

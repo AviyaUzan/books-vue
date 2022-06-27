@@ -1,5 +1,6 @@
-import { utilService } from '../services/util-service.js';
+// import { utilService } from '../services/util-service.js';
 import longText from "../cmps/long-text.cmp.js";
+import reviewAdd from "../cmps/review-add.cmp.js";
 import { bookService } from '../services/book-service.js';
 
 export default {
@@ -7,32 +8,41 @@ export default {
   template: `
     <section v-if="book" class="book-details">
       <div>
-      <img class="img-preview" :src="book.thumbnail">
+      <img class="img-preview" :src="book.thumbnail" />
       </div>
       <div class="all-details">
         <p>Book name: {{book.title}}</p>
-        <long-text :txt="book.description"></long-text>
+        <long-text :txt="book.description" />
         <p>Authors: {{bookAuthors}}</p>
-        <p>Price: <span :class="greenOrRed"> {{getCurrency}}</span></p>
+        <p>Price: 
+          <span :class="greenOrRed"> {{getCurrency}}</span>
+        </p>
         <p>Published date: {{getPublishedDate}}</p>
         <p>Page count: {{getPageCount}}</p>
         <p>categories: {{bookCategories}}</p>
         <p>Language: {{getBookLang}}</p>
+        <p>reviews:</p>
+        <p v-for="(review) in book.reviews">By: {{review.name}} {{review.date}}<br> rate: {{review.rate}}/5 <br>{{review.text}}</p>
         <p>{{bookSale}}</p>
+        <button class="add-review" @click="isAddReview = !isAddReview" >Add Review</button>
+        <review-add class="form-review" v-if="isAddReview" :bookId="book.id"></review-add>
         <router-link class="back-btn" :to="'/book'">Back>></router-link>
-          <!-- <button class="back-btn" @click="$emit('close')">Back>></button> -->
         </div>
       </section>
 `,
   data() {
     return {
       book: null,
+      isAddReview: false
     };
   },
   components:{
     longText,
+    reviewAdd,
   },
-  methods: {},
+  methods: {
+
+  },
   computed: {
     getBookLang(){
       if(this.book.language === 'en') return 'English'

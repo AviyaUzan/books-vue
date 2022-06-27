@@ -8,9 +8,25 @@ export const bookService = {
     query,
     remove,
     save,
-    getEmptyBook,
     get,
+    addReview,
 };
+
+
+function addReview(bookId, review) {
+  return get(bookId).then(book => {
+    if(!book.reviews) book.reviews = []
+      book.reviews.push(review)
+      storageService.put(BOOKS_KEY, book)
+    console.log(book);
+  })
+
+}
+// find the curr book // check
+// check if it has reviews array
+// if not make one and push the new review
+// if there is push it
+
 
 function query() {
   return storageService.query(BOOKS_KEY)
@@ -40,9 +56,9 @@ function save(book) {
     // return book;
 }
 
-function getEmptyBook() {
-    return { id: '', vendor: '', maxSpeed: 0 };
-}
+// function getEmptyBook() {
+//     return { id: '', vendor: '', maxSpeed: 0 };
+// }
 
 function _createBooks() {
     let books = utilService.loadFromStorage(BOOKS_KEY);
