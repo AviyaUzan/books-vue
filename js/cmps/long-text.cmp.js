@@ -9,7 +9,7 @@ export default{
     props:["txt"],
     computed: {
         description() {
-            return  this.txt.slice(0, 50) + '...'
+            return  this.txt.slice(0, 100) + '...'
         },
     },
 }

@@ -5,6 +5,11 @@ export default {
       <div class="logo">
         <img src="/img/header3.png" alt="hello">
       </div>
+      <nav class="nav-bar">
+      <router-link to="/">Home</router-link>|
+      <router-link to="/book">books</router-link>|
+      <router-link to="/about">About</router-link>|
+      </nav>
  </header>
 `,
   data() {

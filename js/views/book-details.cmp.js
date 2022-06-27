@@ -1,9 +1,11 @@
 import { utilService } from '../services/util-service.js';
 import longText from "../cmps/long-text.cmp.js";
+import { bookService } from '../services/book-service.js';
+
 export default {
-  props: ["book"],
+  // props: ["book"],
   template: `
-    <section class="book-details">
+    <section v-if="book" class="book-details">
       <div>
       <img class="img-preview" :src="book.thumbnail">
       </div>
@@ -11,24 +13,20 @@ export default {
         <p>Book name: {{book.title}}</p>
         <long-text :txt="book.description"></long-text>
         <p>Authors: {{bookAuthors}}</p>
-        <p>Price: <span :class="greenOrRed"> {{formattedPrice}}</span></p>
+        <p>Price: <span :class="greenOrRed"> {{getCurrency}}</span></p>
         <p>Published date: {{getPublishedDate}}</p>
         <p>Page count: {{getPageCount}}</p>
         <p>categories: {{bookCategories}}</p>
         <p>Language: {{getBookLang}}</p>
         <p>{{bookSale}}</p>
-          <button class="back-btn" @click="$emit('close')">Back>></button>
+        <router-link class="back-btn" :to="'/book'">Back>></router-link>
+          <!-- <button class="back-btn" @click="$emit('close')">Back>></button> -->
+        </div>
       </section>
-      </div>
 `,
   data() {
     return {
-      pageCount: null,
-      publishDate: null,
-      price:null,
-      formattedPrice: null,
-      isBookSale: null,
-      bookLang: null,
+      book: null,
     };
   },
   components:{
@@ -37,13 +35,13 @@ export default {
   methods: {},
   computed: {
     getBookLang(){
-      if(this.bookLang === 'en') return 'English'
-      else if(this.bookLang === 'sp') return 'Spanish'
-      else if(this.bookLang === 'he') return 'Hebrew'
+      if(this.book.language === 'en') return 'English'
+      else if(this.book.language === 'sp') return 'Spanish'
+      else if(this.book.language === 'he') return 'Hebrew'
     },
     bookSale(){
-      if(this.isBookSale) return 'SALE!'
-      else if(!this.isBookSale) return ''
+      if(this.book.listPrice.isOnSale) return 'SALE!'
+      else if(!this.book.listPrice.isOnSale) return ''
     },
     bookAuthors(){
       return this.book.authors.join(', ')
@@ -52,53 +50,34 @@ export default {
       return this.book.categories.join(', ')
     },
     getPageCount() {
-      if (this.pageCount > 500) return this.pageCount + ' Long reading'
-      else if(this.pageCount > 200) return this.pageCount + ' Decent Reading'
-      else if(this.pageCount < 100) return this.pageCount + ' Light Reading'
-      else return this.pageCount
+      let pageCount = this.book.pageCount
+      if (pageCount > 500) return pageCount + ' Long reading'
+      else if(pageCount > 200) return pageCount + ' Decent Reading'
+      else if(pageCount < 100) return pageCount + ' Light Reading'
+      else return pageCount
     },
     getPublishedDate() {
-      if (new Date().getFullYear() - this.publishDate > 10) return this.publishDate + ' Veteran Book'
-      else if(new Date().getFullYear() - this.publishDate < 1) return this.publishDate + ' New'
-      else return this.publishDate
+      let publishedDate = this.book.publishedDate
+      if (new Date().getFullYear() - publishedDate > 10) return publishedDate + ' Veteran Book'
+      else if(new Date().getFullYear() - publishedDate < 1) return publishedDate + ' New'
+      else return publishedDate
     },
     greenOrRed() {
       return {
-        red: this.price > 150,
-        green: this.price < 20
+        red: this.book.listPrice.amount > 150,
+        green: this.book.listPrice.amount < 20
       }
-    }
+    },
+    getCurrency() {
+      let price = this.book.listPrice.amount
+      let currency = this.book.listPrice.currencyCode
+      if (currency === 'USD') return '$' + price;
+      else if (currency === 'ILS') return price + '₪'
+      else if (currency === 'EUR') return '€' + price 
+  }
     },
     created(){
-      this.bookLang = this.book.language
-      this.isBookSale = this.book.listPrice.isOnSale
-      this.pageCount = this.book.pageCount
-      this.publishDate = this.book.publishedDate
-      this.price = this.book.listPrice.amount
-      const { amount, currencyCode} = this.book.listPrice
-        this.formattedPrice =
-        utilService.getCurrency(amount, currencyCode)
-        // utilService.greenOrRed(amount)
+      const id = this.$route.params.bookId
+      bookService.get(id).then(book => this.book = book)
     },
 };
-
-// id: "OXeMG8wNskc",
-// title: "metus hendrerit",
-// subtitle: "mi est eros convallis auctor arcu dapibus himenaeos",
-// authors: [
-//   "Barbara Cartland"
-// ],
-// publishedDate: 1999,
-// description: "placerat nisi sodales suscipit tellus tincidunt mauris elit sit luctus interdum ad dictum platea vehicula conubia fermentum habitasse congue suspendisse",
-// pageCount: 713,
-// categories: [
-//   "Computers",
-//   "Hack"
-// ],
-// thumbnail: "http://coding-academy.org/books-photos/20.jpg",
-// language: "en",
-// listPrice: {
-//   amount: 109,
-//   currencyCode: "EUR",
-//   isOnSale: false
-// }

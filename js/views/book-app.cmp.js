@@ -8,7 +8,7 @@ export default {
   <section class="book-app">
     <book-filter v-if="!selectedBook" @filtered="filterBook"/>
     <book-list v-if="!selectedBook" @removed="removeBook" @selected="selectBook" :books="booksToShow" />
-    <book-details v-if="selectedBook" @close="selectedBook = null" :book="selectedBook" />
+    <!-- <book-details v-if="selectedBook" @close="selectedBook = null" :book="selectedBook" /> -->
   </section>
 `,
     components: {
@@ -18,16 +18,19 @@ export default {
     },
     data() {
         return {
-            books: bookService.query(),
+            books: null,
             selectedBook: null,
             filterBy: null,
         };
     },
     methods: {
         removeBook(bookId) {
-            bookService.remove(bookId);
-            const idx = this.books.findIndex((book) => book.id === bookId);
-            this.books.splice(idx, 1);
+            bookService.remove(bookId).then(() => {
+                console.log('Deleted successfully');
+                const idx = this.books.findIndex((book) => book.id === bookId);
+                this.books.splice(idx, 1);
+            })
+            // bookService.remove(bookId);
         },
         selectBook(book) {
             this.selectedBook = book;
@@ -50,7 +53,7 @@ export default {
             });
         },
     },
-    // created(){
-    // ?? on created – get the books from the service
-    // }
+    created(){
+        bookService.query().then(books => this.books = books)
+    }
 };
