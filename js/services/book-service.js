@@ -2,6 +2,9 @@ import { utilService } from './util-service.js';
 import { storageService } from './async-storage-service.js';
 
 const BOOKS_KEY = 'books';
+const STORAGE_BOOK_KEY = 'bookDB';
+// let gSearchCache = loadFromStorage(STORAGE_BOOK_KEY) || {};
+
 _createBooks();
 
 export const bookService = {
@@ -10,7 +13,28 @@ export const bookService = {
     save,
     get,
     addReview,
+    askSearchResults,
 };
+
+   function askSearchResults(book) {
+    // if (!gSearchCache[book]) {
+        console.log('getting from server');
+        return axios
+            .get(
+                 `https://www.googleapis.com/books/v1/volumes?printType=books&q=effective%${book}`
+            //     `https://www.googleapis.com/youtube/v3/search?part=snippet
+            // &videoEmbeddable=true&type=video&key=${YT_KEY}&q=${book}`
+            )
+            .then((res) => {
+                // gSearchCache[book] = res.data.items;
+                // saveToStorage(STORAGE_SEARCH_KEY, gSearchCache);
+                return res.data.items
+            });
+    // } else {
+    //     console.log('getting from cache');
+    //     return Promise.resolve(gSearchCache[book]);
+    // }
+}
 
 
 function addReview(bookId, review) {
@@ -67,6 +91,13 @@ function _createBooks() {
         utilService.saveToStorage(BOOKS_KEY, books);
     }
     return books;
+    // let books = query()
+    // if (!books || !books.length) {
+    //     books = getBooks()
+    //     postMany(BOOKS_KEY, books)
+    //     // utilService.saveToStorage(BOOKS_KEY, books);
+    // }
+    // return books;
 }
 
 function getBooks() {

@@ -5,7 +5,7 @@ export default{
     template:`
 
     <form  @submit.prevent="onAddReview">
-        <input type="text" v-model="review.name" placeholder="Enter your name" >
+        <input ref="nameInput" type="text" v-model="review.name" placeholder="Enter your name" >
         <select v-model="review.rate" placeholder="choose your rate">
         <option value="" disabled selected>Select your Rate</option>
             <option v-for="rate in rates" :value="rate">
@@ -27,6 +27,9 @@ export default{
             rates: [1,2,3,4,5]
         }
     },
+    mounted(){
+        this.$refs.nameInput.focus()
+    },
     methods: {
         getCurrDate(){
             let today = new Date()
@@ -42,7 +45,6 @@ export default{
             if(!this.name) this.review.name = 'Books Reader'
             bookService.addReview(this.bookId, {...this.review})
             this.$router.go()
-
         }
     },
 }

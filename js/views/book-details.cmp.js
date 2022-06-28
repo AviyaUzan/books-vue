@@ -22,7 +22,9 @@ export default {
         <p>categories: {{bookCategories}}</p>
         <p>Language: {{getBookLang}}</p>
         <p>reviews:</p>
-        <p v-for="(review) in book.reviews">By: {{review.name}} {{review.date}}<br> rate: {{review.rate}}/5 <br>{{review.text}}</p>
+        <p v-for="(review) in book.reviews">By: {{review.name}} {{review.date}}<br>
+        <span v-for="star in review.rate">⭐</span>
+        <br>{{review.text}}</p>
         <p>{{bookSale}}</p>
         <button class="add-review" @click="isAddReview = !isAddReview" >Add Review</button>
         <review-add class="form-review" v-if="isAddReview" :bookId="book.id"></review-add>
