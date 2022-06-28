@@ -14,7 +14,26 @@ export const bookService = {
     get,
     addReview,
     askSearchResults,
-};
+    addGoogleBook,
+    getNextBookId,
+    getPrevBookId,
+}
+
+function getPrevBookId(bookId){
+  return storageService.query(BOOKS_KEY)
+    .then(books => {
+      const idx = books.findIndex(book => book.id === bookId)
+      return (idx > 0)? books[idx - 1].id : books[books.length - 1].id
+  })
+}
+
+function getNextBookId(bookId) {
+    return storageService.query(BOOKS_KEY)
+    .then(books => {
+      const idx = books.findIndex(book => book.id === bookId)
+      return (idx < books.length-1)? books[idx + 1].id : books[0].id
+  })
+}
 
    function askSearchResults(book) {
     // if (!gSearchCache[book]) {
@@ -35,6 +54,26 @@ export const bookService = {
     //     return Promise.resolve(gSearchCache[book]);
     // }
 }
+
+function addGoogleBook(book) {
+  console.log('book',book)
+  let newBook = {
+    id: book.id,
+    title: book.volumeInfo.title,
+    authors: book.volumeInfo.authors,
+    publishedDate: book.volumeInfo.publishedDate,
+    description: book.volumeInfo.description,
+    pageCount: book.volumeInfo.pageCount,
+    thumbnail: book.volumeInfo.imageLinks.thumbnail,
+    listPrice: {
+        amount: 150,
+        currencyCode: 'ILS',
+        isOnSale: false,
+      }
+  }
+  storageService.post(BOOKS_KEY, newBook)
+}
+
 
 
 function addReview(bookId, review) {

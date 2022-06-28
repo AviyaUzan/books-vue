@@ -29,22 +29,24 @@ export default {
         <button class="add-review" @click="isAddReview = !isAddReview" >Add Review</button>
         <review-add class="form-review" v-if="isAddReview" :bookId="book.id"></review-add>
         <router-link class="back-btn" :to="'/book'">Back>></router-link>
-        </div>
-      </section>
+        <router-link :to="'/book/' + nextBookId">Next Book</router-link>
+        <router-link :to="'/book/' + prevBookId">Prev Book</router-link>
+      </div>
+    </section>
 `,
   data() {
     return {
       book: null,
-      isAddReview: false
+      isAddReview: false,
+      nextBookId: null,
+      prevBook: null,
     };
   },
   components:{
     longText,
     reviewAdd,
   },
-  methods: {
-
-  },
+  methods: {},
   computed: {
     getBookLang(){
       if(this.book.language === 'en') return 'English'
@@ -88,8 +90,19 @@ export default {
       else if (currency === 'EUR') return '€' + price 
   }
     },
-    created(){
-      const id = this.$route.params.bookId
-      bookService.get(id).then(book => this.book = book)
-    },
+    watch: {
+      '$route.params.bookId':{
+          handler() {
+              const id = this.$route.params.bookId
+              bookService.get(id).then(book => {
+                  this.book = book
+                  bookService.getPrevBookId(book.id)
+                      .then(prevBookId => this.prevBookId = prevBookId)
+                  bookService.getNextBookId(book.id)
+                      .then(nextBookId => this.nextBookId = nextBookId)
+              })
+          },
+          immediate: true
+      },  
+  },
 };
